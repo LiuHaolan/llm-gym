@@ -182,11 +182,23 @@ def collision_checking(vehicle):
             return True
 
 
+import vidmaker
+
+FPS = 60
+
+recording = False
+
+if recording:
+    video = vidmaker.Video("vidmaker.mp4", late_export=True)
+
+
 import time
 
 running = True
 
 commute_time = 0.0
+
+SIM_STEP = 30
 
 dt = 0.1
 while running:
@@ -212,8 +224,21 @@ while running:
     
     time.sleep(0.1)
     
+    commute_time = commute_time + 1
+    if commute_time> SIM_STEP:
+        break
+    
+    # video recording
+    if recording:
+        video.update(pygame.surfarray.pixels3d(screen).swapaxes(0, 1), inverted=False) # THIS LINE
+        
+    
     pygame.display.flip()
     clock.tick(60)
+
+if recording:
+    video.export(verbose=True)
+
 
 pygame.quit()
 sys.exit()
