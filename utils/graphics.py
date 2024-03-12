@@ -20,3 +20,31 @@ def draw_rectangle(screen, rect, color=(255,0,0)):
     # Blit the rotated surface onto the screen
     screen.blit(rotated_surface, rotated_rect.topleft)
 
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Polygon
+
+def draw_rectangle_matplotlib(x, y, yaw, length, width):
+    # Calculate corner points in local coordinate system before rotation
+    corner_offsets = np.array([
+        [-length / 2, -width / 2],
+        [-length / 2, width / 2],
+        [length / 2, width / 2],
+        [length / 2, -width / 2],
+    ])
+    
+    # Rotation matrix based on yaw angle
+    rotation_matrix = np.array([
+        [np.cos(yaw), -np.sin(yaw)],
+        [np.sin(yaw), np.cos(yaw)]
+    ])
+    
+    # Rotate corners and translate to global position
+    corners_rotated_and_translated = np.dot(rotation_matrix, corner_offsets.T).T + np.array([x, y])
+    
+    # Create a Polygon patch
+    rectangle = Polygon(corners_rotated_and_translated, closed=True, edgecolor='r', facecolor='none')
+    return rectangle
+    # Add patch to current axes
+    # plt.gca().add_patch(rectangle)
+    #plt.axis('equal')  # Ensure x and y have the same scale for proper aspect ratio
