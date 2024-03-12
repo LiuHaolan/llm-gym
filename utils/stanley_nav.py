@@ -19,7 +19,7 @@ from utils.angles import angle_mod
 from utils import cubic_spline_planner
 
 
-
+"""
 
 class Scenario:
     def __init__(self):
@@ -65,7 +65,7 @@ def test():
         plt.scatter(end[0],end[1],s=160, c='mediumseagreen', marker=(5, 1))  #creates plot with star marker
         plt.show()
 
-
+"""
 k = 0.5  # control gain
 Kp = 1.0  # speed proportional gain
 dt = 0.1  # [s] time difference
