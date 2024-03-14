@@ -66,7 +66,7 @@ def test():
         plt.show()
 
 """
-k = 0.5  # control gain
+k = 0.8  # control gain
 Kp = 1.0  # speed proportional gain
 dt = 0.1  # [s] time difference
 L = 2.9  # [m] Wheel base of vehicle

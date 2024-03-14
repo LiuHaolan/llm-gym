@@ -28,7 +28,111 @@ def check_collision(rect_x, rect_y, yaw, length, width, circle_x, circle_y, radi
     distance = math.sqrt(distance_x**2 + distance_y**2)
     return distance < radius
 
+import numpy as np
+
+def rotate_point(cx, cy, angle, px, py):
+    """Rotate a point around a given point.
+    cx, cy - rotation center, angle - rotation angle, px, py - point coordinates"""
+    s = np.sin(angle)
+    c = np.cos(angle)
+    # translate point back to origin:
+    px -= cx
+    py -= cy
+    # rotate point
+    xnew = px * c - py * s
+    ynew = px * s + py * c
+    # translate point back:
+    px = xnew + cx
+    py = ynew + cy
+    return px, py
+
+def get_rectangle_vertices(cx, cy, yaw, width, height):
+    """Get the vertices of a rotated rectangle."""
+    corners = [(-width / 2, -height / 2), (width / 2, -height / 2),
+               (width / 2, height / 2), (-width / 2, height / 2)]
+    vertices = [rotate_point(0, 0, yaw, x, y) for x, y in corners]
+    vertices = [(x + cx, y + cy) for x, y in vertices]
+    return vertices
+
+def project_polygon(axis, vertices):
+    """Project all vertices of a polygon on an axis and return the min and max projection."""
+    dots = [np.dot(axis, vertex) for vertex in vertices]
+    return min(dots), max(dots)
+
+def axis_overlap(axis, poly1, poly2):
+    """Check if the projections of two polygons on an axis overlap."""
+    min1, max1 = project_polygon(axis, poly1)
+    min2, max2 = project_polygon(axis, poly2)
+    return max1 >= min2 and max2 >= min1
+
+def rectangles_overlap(rect1, rect2):
+    """Check if two rectangles overlap."""
+    vertices1 = get_rectangle_vertices(*rect1)
+    vertices2 = get_rectangle_vertices(*rect2)
+    
+    axes = []
+    for rect in [vertices1, vertices2]:
+        for i in range(len(rect)):
+            # Get the current and next vertex
+            p1, p2 = rect[i], rect[(i+1) % len(rect)]
+            # Compute the edge vector (p2 - p1)
+            edge = np.subtract(p2, p1)
+            # Get a perpendicular vector to the edge
+            normal = (-edge[1], edge[0])
+            axes.append(normal)
+    
+    for axis in axes:
+        if not axis_overlap(axis, vertices1, vertices2):
+            return False
+    return True
+
+def test_rectangle_2():
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+    import random
+    import math
+
+    # Assuming the check_collision function is defined as above
+
+    def generate_random_rectangle():
+        center_x = random.uniform(-3, 3)
+        center_y = random.uniform(-3, 3)
+        yaw = np.radians(random.uniform(0, 360))
+        width = random.uniform(3, 5)
+        height = random.uniform(1, 3)
+        return (center_x, center_y, yaw, width, height)
+
+    rectangle_pairs = [(generate_random_rectangle(), generate_random_rectangle()) for _ in range(9)]
+
+    fig, axs = plt.subplots(3, 3, figsize=(15, 15))
+
+    for i, ((rect1, rect2), ax) in enumerate(zip(rectangle_pairs, axs.flatten())):
+        vertices1 = get_rectangle_vertices(*rect1)
+        vertices2 = get_rectangle_vertices(*rect2)
+        
+        polygon1 = patches.Polygon(vertices1, closed=True, color='blue', alpha=0.5)
+        polygon2 = patches.Polygon(vertices2, closed=True, color='red', alpha=0.5)
+        
+        ax.add_patch(polygon1)
+        ax.add_patch(polygon2)
+        ax.set_xlim(-10, 10)
+        ax.set_ylim(-10, 10)
+        ax.set_aspect('equal')
+        
+        overlap_result = rectangles_overlap(rect1, rect2)
+        ax.set_title(f'Case {i+1}: {"Overlap" if overlap_result else "No Overlap"}')
+
+    plt.tight_layout()
+    plt.show()
+
+
+
 if __name__ == '__main__':
+    test_rectangle_2()
+
+
+def test_circle_rectangle():
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
     import numpy as np
