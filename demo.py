@@ -15,6 +15,12 @@ class LLMEntry(ABCMeta):
 
 from collections import deque
 
+from langchain.tools import (
+    BaseTool,
+    StructuredTool,
+    tool,
+)
+
 class Vehicle:
 
     def __init__(self, center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw, target_speed = 30.0 / 3.6 ):
@@ -53,32 +59,8 @@ class Vehicle:
     def describe(self):
         return ""
 
-class Lane(LLMEntry):
-    
-    def __init__(self, spline : CubicSpline2D, lane_width):
-        self.spline = spline
-        self.lane_width = lane_width
-
-    def describe(self):
-        pass
-
-    # def render(self):
-    #    pass
 
 
-class Map(LLMEntry):
-    def __init__(self):
-        # dict mapping lane id to lane objects
-        self.lane = {}
-
-    def describe(self):
-        pass
-
-    # an external query function for LLM to search the lane graph
-    def query(self):
-        pass
-
-    # a map object that contains several lanes
 
 
 
@@ -302,9 +284,10 @@ def lane_changing():
 
 
         # collision checking
+         # collision checking
         for v in vehicle_list[1:]:
-            rect_ego = (v0.state.x, v0.state.y, v0.state.yaw, v0.width, v0.height)
-            rect_v = (v.state.x, v.state.y, v.state.yaw, v.width, v.height)
+            rect_ego = (v0.state.x, v0.state.y, v0.state.yaw, v0.vehicle_length, v0.vehicle_width)
+            rect_v = (v.state.x, v.state.y, v.state.yaw, v.vehicle_length, v.vehicle_width)
 
             if rectangles_overlap(rect_ego, rect_v):
                 print("Collision detected")
@@ -494,4 +477,7 @@ def lane_following(show_animation = False):
 
 if __name__ == '__main__':
     #lane_following(show_animation = True)
-    lane_changing()#show_animation=True)
+    #lane_changing()#show_animation=True)
+
+    #from llm_gym.map import 
+    pass
