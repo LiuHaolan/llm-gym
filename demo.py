@@ -23,6 +23,9 @@ from langchain.tools import (
 
 class Vehicle:
 
+    DECELERATION_DELTA = 2
+    ACELERATION_DELTA = 2
+
     def __init__(self, center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw, target_speed = 30.0 / 3.6 ):
         #self.center_x = center_x
         #self.center_y = center_y
@@ -35,8 +38,7 @@ class Vehicle:
         self.buffered_traj = deque(maxlen=5)
 
 
-
-        # generate a course to follow, given (ax, ay)
+    # generate a course to follow, given (ax, ay)
     def plan(self, ax, ay):
             # generating a reference line to track
         self.cx, self.cy, self.cyaw, ck, s = cubic_spline_planner.calc_spline_course(
@@ -57,7 +59,9 @@ class Vehicle:
 
 
     def describe(self):
-        return ""
+        return """
+
+        """
 
 
 
@@ -476,8 +480,7 @@ def lane_following(show_animation = False):
     return True
 
 if __name__ == '__main__':
-    #lane_following(show_animation = True)
+    lane_following(show_animation = True)
     #lane_changing()#show_animation=True)
 
     #from llm_gym.map import 
-    pass

@@ -1,6 +1,6 @@
 import math
 
-def rotate_point(x, y, angle):
+def rotate_point_origin(x, y, angle):
     """Rotate a point counterclockwise by a given angle around the origin."""
     x_new = x * math.cos(angle) - y * math.sin(angle)
     y_new = x * math.sin(angle) + y * math.cos(angle)
@@ -10,7 +10,7 @@ def check_collision(rect_x, rect_y, yaw, length, width, circle_x, circle_y, radi
     # Translate and rotate circle's center to align the rectangle with axes
     translated_x = circle_x - rect_x
     translated_y = circle_y - rect_y
-    rotated_x, rotated_y = rotate_point(translated_x, translated_y, -yaw)
+    rotated_x, rotated_y = rotate_point_origin(translated_x, translated_y, -yaw)
     
     # Compute the half dimensions of the rectangle
     half_length = length / 2
