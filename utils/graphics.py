@@ -43,7 +43,7 @@ def draw_rectangle_matplotlib(x, y, yaw, length, width):
     corners_rotated_and_translated = np.dot(rotation_matrix, corner_offsets.T).T + np.array([x, y])
     
     # Create a Polygon patch
-    rectangle = Polygon(corners_rotated_and_translated, closed=True, edgecolor='r', facecolor='none')
+    rectangle = Polygon(corners_rotated_and_translated, closed=True, edgecolor='r', facecolor='r')
     return rectangle
     # Add patch to current axes
     # plt.gca().add_patch(rectangle)

@@ -26,11 +26,11 @@ class Vehicle:
     DECELERATION_DELTA = 2
     ACELERATION_DELTA = 2
 
-    def __init__(self, center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw, target_speed = 30.0 / 3.6 ):
+    def __init__(self, center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw, initial_v=0, target_speed = 30.0 / 3.6 ):
         #self.center_x = center_x
         #self.center_y = center_y
         #self.yaw = vehicle_yaw
-        self.state = State(x=center_x, y=center_y, yaw=vehicle_yaw, v=0.0)
+        self.state = State(x=center_x, y=center_y, yaw=vehicle_yaw, v=initial_v)
         self.vehicle_length = vehicle_length
         self.vehicle_width = vehicle_width
         self.target_speed =  target_speed
@@ -91,6 +91,23 @@ def generate_two_lanes(num_points=5, lane_width=5, lane_length=100, lane_separat
     spline2 = CubicSpline2D(x, y + lane_width + lane_separation)  # Offset by lane width and separation
 
     return spline1, spline2, lane_width
+
+from llm_gym.map import SplineLane, Map
+
+
+def generate_maps(num_points=5, lane_width=5, lane_length=100, lane_separation=0):
+
+    # Generate a random sequence of 2D coordinates for the first lane's centerline
+    x = np.linspace(0, lane_length, num_points)
+    y = np.random.uniform(-1, -0.5, num_points)
+    
+    # Create a spline curve for the first lane's centerline
+    spline1 = CubicSpline2D(x, y)
+    # Create a parallel lane by offsetting the y-coordinates
+    spline2 = CubicSpline2D(x, y + lane_width + lane_separation)  # Offset by lane width and separation
+
+    return spline1, spline2, lane_width
+
 
 def generate_vehicle_on_lane(spline, vehicle_length, vehicle_width, s):
     #spline = splines[0]  # Choose the spline based on the lane number
@@ -182,7 +199,7 @@ from utils.collision import rectangles_overlap
 from utils.stanley_nav import *
 def lane_changing():
 
-    recording = False
+    recording = True
     if recording:
         list_of_im_paths = []
 
@@ -219,7 +236,7 @@ def lane_changing():
     
     vehicle_list = []
 
-    v0 = Vehicle(center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw, target_speed=20/3.6)
+    v0 = Vehicle(center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw, initial_v= 20/3.6, target_speed=20/3.6)
 
 
 
@@ -229,7 +246,7 @@ def lane_changing():
 
 
     center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw = generate_vehicle_on_lane(spline2, vehicle_length=4, vehicle_width=2, s=0)#(splines, lane_width, 4, 2, lane_number)
-    v1 = Vehicle(center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw)
+    v1 = Vehicle(center_x, center_y, vehicle_length, vehicle_width, vehicle_yaw, initial_v= 10/3.6, target_speed=10/3.6)
     interval = 30
     s = np.linspace(0, 50, interval)
     ax = np.array([0.0]*interval)
@@ -264,7 +281,7 @@ def lane_changing():
     """
 
     iter_n = 0
-    max_iter = 60
+    max_iter = 70
     while iter_n <= max_iter and v0.plannable():
         """
         ai = pid_control(target_speed, state.v)
@@ -480,7 +497,7 @@ def lane_following(show_animation = False):
     return True
 
 if __name__ == '__main__':
-    lane_following(show_animation = True)
-    #lane_changing()#show_animation=True)
+    #lane_following(show_animation = True)
+    lane_changing()#show_animation=True)
 
     #from llm_gym.map import 

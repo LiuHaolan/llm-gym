@@ -13,10 +13,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import pathlib
-from utils.angles import angle_mod
-#sys.path.append(str(pathlib.Path(__file__).parent.parent.parent))
 
-from utils import cubic_spline_planner
+print(str(pathlib.Path(__file__)))
+sys.path.append(str(pathlib.Path(__file__).parent))
+from angles import angle_mod
+import cubic_spline_planner
 
 
 """
